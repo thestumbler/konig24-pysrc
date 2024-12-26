@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
-CALIBRATE = True
+#CALIBRATE = True
+CALIBRATE = False
 
 # CONSTRUCTION draws the meter face card with some 
 # auxiliary information and lines.
 # Turn off CONSTRUCTION for final artwork.
-CONSTRUCTION = True
-#CONSTRUCTION = False
+#CONSTRUCTION = True
+CONSTRUCTION = False
 
 # MODE selects which meter mode to display 
 # on the meter face. 
-MODE = 0
+MODE = 2
 VU_MODES = [ 'VU METER', 'LUFS METER', 'PEAK METER' ]
 
 
@@ -71,7 +72,14 @@ print(px)
 fig = plt.figure(figsize=(img_size*px, img_size*px))
 #fig = plt.figure(frameon = False)
 #fig.set_size_inches(480*px, 480*px)
-fig.set_facecolor( '#ffedb0' ) 
+if MODE == 0:
+  fig.set_facecolor( '#ffedb0' ) 
+if MODE == 1:
+  fig.set_facecolor( 'lavender' ) 
+if MODE == 2:
+  fig.set_facecolor( 'pink' ) 
+print('Background color:',
+      matplotlib.colors.to_hex(fig.get_facecolor()) )
 # Create an axis that covers the entire figure without any axes
 # Note: all coordinates in this code are based on a
 # 0,0 to 1,1 square, converted to pixels at the end
@@ -399,12 +407,13 @@ if True:
       transform=ax.transAxes
   )
   ax.add_patch(circ)
-  xyanchor = add2( xych1, [-0.75*rad_mute, 0.75*rad_mute] )
-  ax.text( *xyanchor, 'CH1', color=color_buttons, 
-    fontsize = 12, fontweight = 'bold',
-    horizontalalignment='center',
+  rad_off_label = 0.9*rad_mute
+  xyanchor = add2( xych1, [-rad_off_label, rad_off_label] )
+  ax.text( *xyanchor, 'OUT1', color=color_buttons, 
+    fontsize = 14, fontweight = 'bold',
+    horizontalalignment='right',
     verticalalignment='bottom',
-    rotation = 45, rotation_mode='anchor')
+    rotation = 270.0+0.5*face.ASPAN, rotation_mode='anchor')
   # CHANNEL 2 BUTTON
 if CONSTRUCTION:
   circ=plt.Circle( xych2, radius = rad_mute, 
@@ -418,12 +427,12 @@ if True:
       transform=ax.transAxes
   )
   ax.add_patch(circ)
-  xyanchor = add2( xych2, [0.75*rad_mute, 0.75*rad_mute] )
-  ax.text( *xyanchor, 'CH2', color=color_buttons, 
-    fontsize = 12, fontweight = 'bold',
-    horizontalalignment='center',
+  xyanchor = add2( xych2, [rad_off_label, rad_off_label] )
+  ax.text( *xyanchor, 'OUT2', color=color_buttons, 
+    fontsize = 14, fontweight = 'bold',
+    horizontalalignment='left',
     verticalalignment='bottom',
-    rotation = -45, rotation_mode='anchor')
+    rotation = 90.0-0.5*face.ASPAN, rotation_mode='anchor')
 
 # Print the button bounding boxes for touchscreen
 print(bbox0)
