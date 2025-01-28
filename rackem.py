@@ -65,3 +65,10 @@ class Panel:
     return self.__repr__()
 
 
+# this doesn't work?
+# int has no attribute "inches"
+# but works from interactive.
+# for u in range(6):
+#   p = Panel(u)
+#   print(p)
+
