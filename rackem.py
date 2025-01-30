@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
+from fractions import Fraction
 from dataclasses import dataclass
 
 from pint import UnitRegistry
-u = UnitRegistry()
+ureg = UnitRegistry()
 
 # measurements seem to be defined in inches
 # oritinally.
@@ -47,20 +48,32 @@ u = UnitRegistry()
 
 #print( f'{x_in:10.3f~#P}{x_mm:10.2f~#P}')
 
-@dataclass
+class Fractional_inches:
+  def __init__(self, _value):
+    self.value = _value
+    self.whole = float(int(_value))
+    self.fract = Fraction( _value - self.whole )
+    if self.fract == 0: self.sfract = '     '
+    else: self.sfract = f'-{str(self.fract):<4s}'
+  def __repr__(self):
+    return f'{self.whole:>2.0f}{self.sfract}'
+
 class Panel:
-  H1U = 1.750 * u.inches
-  GAP = 0.03125 * u.inches
+  H1U = 1.750 * ureg.inches
+  GAP = 0.03125 * ureg.inches
   # panel definitions
-  n1u: int #number of 1U tall
-  def __post_init__( self ):
+  def __init__( self, _n1u ):
+    self.n1u = _n1u
     # height of defined panel
-    self.hgt = self.n1u * Panel.H1U - Panel.GAP
+    self.hgt_panel = self.n1u * Panel.H1U - Panel.GAP
+    self.hgt = self.n1u * Panel.H1U
+    self.fhgt = Fractional_inches(self.hgt.magnitude)
   def __repr__(self):
     return \
       f'{self.n1u}U  ' \
-      f'{self.hgt.to(u.inches):10.3f~#P}' \
-      f'{self.hgt.to(u.mm):10.2f~#P}'
+      f'{self.fhgt}' \
+      f'{self.hgt.to(ureg.inch):10.3f~#P}' \
+      f'{self.hgt.to(ureg.mm):10.2f~#P}'
   def __str__(self):
     return self.__repr__()
 
@@ -68,7 +81,7 @@ class Panel:
 # this doesn't work?
 # int has no attribute "inches"
 # but works from interactive.
-# for u in range(6):
-#   p = Panel(u)
-#   print(p)
+for u in range(1,6):
+  p = Panel(u)
+  print(p)
 
