@@ -1,0 +1,6 @@
+
+export ad00='/dev/cu.usbmodem11122401'  # proto_digital_00   7DF06CFA89A6F59A   22
+export ad01='/dev/cu.usbmodem11123101'  # proto_digital_01   0C4941E2ADE834E3   39
+export ad02='/dev/cu.usbmodem11123201'  # proto_digital_02   DFB05B2382FFB81D   19
+export ad03='/dev/cu.usbmodem11123301'  # proto_digital_03   9349325338EF36FE   21
+
