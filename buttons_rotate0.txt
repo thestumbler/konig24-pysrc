@@ -1,0 +1,14 @@
+0.01
+Background color: #ffc0cb
+self.ALL_GEO = (  120,  108,   29 )
+self.ALL_XLIM = (   91,  149 )
+self.ALL_YLIM = (   79,  137 )
+self.CH1_GEO = (   48,   67,   24 )
+self.CH1_XLIM = (   24,   72 )
+self.CH1_YLIM = (   43,   91 )
+self.CH2_GEO = (  192,   67,   24 )
+self.CH2_XLIM = (  168,  216 )
+self.CH2_YLIM = (   43,   91 )
+self.LOGO_GEO = (  120,   32,   32 )
+self.LOGO_XLIM = (   88,  152 )
+self.LOGO_YLIM = (    0,   64 )
