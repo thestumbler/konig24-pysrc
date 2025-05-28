@@ -6,12 +6,12 @@ CALIBRATE = False
 # CONSTRUCTION draws the meter face card with some 
 # auxiliary information and lines.
 # Turn off CONSTRUCTION for final artwork.
-#CONSTRUCTION = True
-CONSTRUCTION = False
+CONSTRUCTION = True
+#CONSTRUCTION = False
 
 # MODE selects which meter mode to display 
 # on the meter face. 
-MODE = 2
+MODE = 0
 VU_MODES = [ 'VU METER', 'LUFS METER', 'PEAK METER' ]
 
 
@@ -27,7 +27,7 @@ from matplotlib.ticker import AutoMinorLocator
 import matplotlib.widgets as widgets
 from matplotlib.patches import Rectangle, Arc
 import matplotlib
-matplotlib.use('tkagg')
+# matplotlib.use('tkagg')
 
 from PIL import Image
 from matplotlib.offsetbox import AnnotationBbox, OffsetImage
@@ -347,16 +347,18 @@ if True:
 # ------------------------------------------------------------------------
 if True:
   # Load logo image
-  w, h = 466, 466
-  zoom = 0.08
   xylogo = (0.5, 0.5*(center[1]+rad_needle_beg))
-  image_path = "two-way-transparent.png"
+  #zoom = 0.08
+  #w, h = 466, 466
+  #image_path = "logos/two-way-transparent.png"
+  zoom = 0.05
+  w, h = 907, 684
+  image_path = "logos/intraframe-transparent.png"
   image_data = Image.open(image_path).convert('RGBA')
   zoom_factor = min(w / image_data.width, h / image_data.height) * zoom
   image_box = OffsetImage(image_data, zoom=zoom_factor)
   anno_box = AnnotationBbox(image_box, 
                             xy=xylogo, xycoords='axes fraction', 
-                            #xy=(0.5, 0.0), xycoords='axes fraction', 
                             box_alignment=(0.5, 0.5), frameon=False)
   ax.add_artist(anno_box)
   b3rad = xylogo[1]
