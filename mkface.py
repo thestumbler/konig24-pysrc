@@ -3,11 +3,14 @@
 #CALIBRATE = True
 CALIBRATE = False
 
+DRAW_LOGO = True
+#DRAW_LOGO = False
+
 # CONSTRUCTION draws the meter face card with some 
 # auxiliary information and lines.
 # Turn off CONSTRUCTION for final artwork.
-CONSTRUCTION = True
-#CONSTRUCTION = False
+# CONSTRUCTION = True
+CONSTRUCTION = False
 
 # MODE selects which meter mode to display 
 # on the meter face. 
@@ -296,7 +299,8 @@ if False:
 # ========================================================================
 # plot cicle around the edge of the LCD, which is circular, not square
 # ------------------------------------------------------------------------
-if CONSTRUCTION:
+# if CONSTRUCTION:
+if True:
   circ=plt.Circle(
       (0.5,0.5), radius=0.5, color=color_feature, 
       fill=False,transform=ax.transAxes
@@ -345,15 +349,21 @@ if True:
 # ========================================================================
 # plot logo image inside the meter hub
 # ------------------------------------------------------------------------
-if True:
-  # Load logo image
-  xylogo = (0.5, 0.5*(center[1]+rad_needle_beg))
+# Load logo image
+xylogo_fudge = (0.01, -0.015)
+xylogo_base = (0.5,  0.5*(center[1]+rad_needle_beg))
+xylogo = tuple(p+q for p, q in zip(xylogo_base, xylogo_fudge))
+
+b3rad = xylogo[1]
+bbox3 = button_bounding_box( 'LOGO', img_size, xylogo, b3rad )
+if DRAW_LOGO:
   #zoom = 0.08
   #w, h = 466, 466
   #image_path = "logos/two-way-transparent.png"
-  zoom = 0.05
-  w, h = 907, 684
-  image_path = "logos/intraframe-transparent.png"
+  zoom = 0.20
+  w, h = 240, 240
+  #image_path = "logos/logo-intraframe-240px.png"
+  image_path = "logos/intraframe-square-combined.png"
   image_data = Image.open(image_path).convert('RGBA')
   zoom_factor = min(w / image_data.width, h / image_data.height) * zoom
   image_box = OffsetImage(image_data, zoom=zoom_factor)
@@ -361,8 +371,6 @@ if True:
                             xy=xylogo, xycoords='axes fraction', 
                             box_alignment=(0.5, 0.5), frameon=False)
   ax.add_artist(anno_box)
-  b3rad = xylogo[1]
-  bbox3 = button_bounding_box( 'LOGO', img_size, xylogo, b3rad )
 
 # ========================================================================
 # plot circle representing the button area, demo feature
