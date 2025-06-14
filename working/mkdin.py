@@ -1,10 +1,10 @@
+#!/usr/bin/env python
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 from PIL import Image
 from matplotlib.offsetbox import AnnotationBbox, OffsetImage
-
 
 
 # Parameters for the DIN meter scale
@@ -50,7 +50,7 @@ zoom_factor = min(w / image_data.width, h / image_data.height) * zoom
 image_box = OffsetImage(image_data, zoom=zoom_factor)
 anno_box = AnnotationBbox(image_box, 
                           xy=xyruler, xycoords='axes fraction', 
-                          box_alignment=(0.0, 0.5), frameon=False)
+                          box_alignment=(0.0, 0.75), frameon=False)
 
 # Convert angles to radians for polar plot
 # angles_rad = np.deg2rad(angles)

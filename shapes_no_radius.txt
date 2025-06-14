@@ -1,2 +1,0 @@
-circle, 50, 100, 20   # Circle at (50,100) with radius 20
-square, 150, 200, 40  # Square centered at (150,200) with side length 40

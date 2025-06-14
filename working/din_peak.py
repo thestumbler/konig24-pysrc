@@ -10,9 +10,9 @@ A = 100  # Angular span in degrees
 db_values = np.array([-50, -40, -30, -20, -10, -5, 0, 5])
 
 # Function to calculate angular positions based on dB values
-def db_to_angle(db, k, p, A):
+def db_to_angle(db, _k=k, _p=p, _A=A):
     normalized = (db - db_values.min()) / (db_values.max() - db_values.min())  # Normalize dB range
-    return -A / 2 + A * (1 - np.exp(-k * normalized**p)) / (1 - np.exp(-k))  # Apply compression formula
+    return -_A / 2 + _A * (1 - np.exp(-_k * normalized**_p)) / (1 - np.exp(-_k))  # Apply compression formula
 
 # Calculate angles for each dB value
 angles = db_to_angle(db_values, k, p, A)

@@ -1,4 +1,0 @@
-/dev/disk6s1      134M    954k    133M     1%       0     0     -   /Volumes/RP2350 1
-/dev/disk7s1      134M    954k    133M     1%       0     0     -   /Volumes/RP2350 2
-/dev/disk8s1      134M    954k    133M     1%       0     0     -   /Volumes/RP2350 3
-/dev/disk5s1      134M    963k    133M     1%       0     0     -   /Volumes/RP2350

@@ -1,22 +1,5 @@
 #!/usr/bin/env python
 
-#CALIBRATE = True
-CALIBRATE = False
-
-DRAW_LOGO = True
-#DRAW_LOGO = False
-
-# CONSTRUCTION draws the meter face card with some 
-# auxiliary information and lines.
-# Turn off CONSTRUCTION for final artwork.
-# CONSTRUCTION = True
-CONSTRUCTION = False
-
-# MODE selects which meter mode to display 
-# on the meter face. 
-MODE = 0
-VU_MODES = [ 'VU METER', 'LUFS METER', 'PEAK METER' ]
-
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -35,8 +18,58 @@ import matplotlib
 from PIL import Image
 from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 import datetime as dt
-import vu
 from utils import clip, p2r, add2, button_bounding_box
+
+
+
+#CALIBRATE = True
+CALIBRATE = False
+
+DRAW_LOGO = True
+#DRAW_LOGO = False
+
+# CONSTRUCTION draws the meter face card with some 
+# auxiliary information and lines.
+# Turn off CONSTRUCTION for final artwork.
+# CONSTRUCTION = True
+CONSTRUCTION = False
+
+import vu 
+import din
+
+METERS = [ vu, vu, din ]
+
+# MODE selects which meter mode to display 
+# on the meter face. 
+MODES =  [     0,           1,           2          ]
+NAMES =  [ 'VU METER', 'LUFS METER', 'PEAK METER'   ]
+COLORS = [ '#ffedb0',  'lavender', 'lightsteelblue' ]
+
+aspan = 75           # angular span of meter arc
+center = (0.5, 0.1)  # center point of arc
+radius = 0.65        # radius of arc
+
+FACES = []
+POINTS = []
+for m in MODES:
+  FACES.append( METERS[m].Meter(aspan, m, NAMES[m], COLORS[m] ) )
+  POINTS.append( METERS[m].Point )
+
+mode = 0
+if len(sys.argv) > 1:
+  try:
+    mode = int(sys.argv[1])
+  except Exception as e:
+    print(e)
+    print("mode needs to be an integer, goodbye")
+    sys.exit()
+  
+if mode < 0 or mode >= 3:
+  print("mode must be 0, 1, or 2. Goodbye")
+  self.exit()
+
+face = FACES[mode]
+Point = POINTS[mode]
 
 
 # change matplotlib global settings
@@ -75,12 +108,14 @@ print(px)
 fig = plt.figure(figsize=(img_size*px, img_size*px))
 #fig = plt.figure(frameon = False)
 #fig.set_size_inches(480*px, 480*px)
-if MODE == 0:
-  fig.set_facecolor( '#ffedb0' ) 
-if MODE == 1:
-  fig.set_facecolor( 'lavender' ) 
-if MODE == 2:
-  fig.set_facecolor( 'pink' ) 
+# if MODE == 0:
+#   fig.set_facecolor( '#ffedb0' ) 
+# if MODE == 1:
+#   fig.set_facecolor( 'lavender' ) 
+# if MODE == 2:
+#   fig.set_facecolor( 'pink' ) 
+
+fig.set_facecolor( face.color ) 
 print('Background color:',
       matplotlib.colors.to_hex(fig.get_facecolor()) )
 # Create an axis that covers the entire figure without any axes
@@ -165,11 +200,6 @@ if CALIBRATE:
 # needed for adjoining the black and red segments.
 # Instead , draw arc by many short linear segments
 # ========================================================================
-aspan = 75           # angular span of meter arc
-center = (0.5, 0.1)  # center point of arc
-radius = 0.65        # radius of arc
-face = vu.Meter(aspan) #degrees
-
 rticklen =  0.05 * radius    # major tick mark length
 rticklen2 = 0.65 * rticklen  # minor tick mark length
 rtextoff = 1.130 * rticklen    # offset of label text
@@ -181,8 +211,9 @@ x0, y0 = add2( center, p2r( radius, aref ) )
 for n in range(1,NSEGS+1):
   a0 = n*adel
   a = aref - a0
-  if a0 > face.AZERO: color='red'
-  else: color = 'black'
+  color = 'black'
+  if face.AZERO is not None:
+    if a0 > face.AZERO: color='red'
   x1, y1 = add2( center, p2r( radius, a ) )
   ax.plot( [x0, x1], [y0, y1], color=color,
           linewidth=3, solid_capstyle='butt')
@@ -191,12 +222,12 @@ for n in range(1,NSEGS+1):
 # ========================================================================
 # plot linear percentage scale
 # ------------------------------------------------------------------------
-if True:
+if True and len(face.v100_list):
   points = []
   for v100 in face.v100_list:
-    points.append( vu.Point(face).from_v100(v100, label=True) )
+    points.append( Point(face).from_v100(v100, label=True) )
   for v100 in face.v100_list2:
-    points.append( vu.Point(face).from_v100(v100, label=False) )
+    points.append( Point(face).from_v100(v100, label=False) )
   points.sort()
   #print("v100 points")
   #for p in points: print(p)
@@ -228,9 +259,9 @@ if True:
 if True:
   points = []
   for vdb in face.vdb_list:
-    points.append( vu.Point(face).from_vdb(vdb, label=True) )
+    points.append( Point(face).from_vdb(vdb, label=True) )
   for vdb in face.vdb_list2:
-    points.append( vu.Point(face).from_vdb(vdb, label=False) )
+    points.append( Point(face).from_vdb(vdb, label=False) )
   points.sort()
   #print("vdb points")
   #for p in points: print(p)
@@ -238,8 +269,9 @@ if True:
   labels = [ p.vdb_label for p in points ]
   for a0, label in zip(alist, labels):
     a = 90 + 0.5*face.ASPAN - a0
-    if a0 > face.AZERO: color = 'red'
-    else:               color = 'black'
+    color = 'black'
+    if face.AZERO is not None:
+      if a0 > face.AZERO: color = 'red'
     if label == '': rdb = radius + rticklen2
     else:           rdb = radius + rticklen
     # convert to x,y values  
@@ -311,7 +343,7 @@ if True:
 # plot the meter mode text 
 # ------------------------------------------------------------------------
 if True:
-  str_mode = VU_MODES[MODE]
+  str_mode = face.name
   xylogo = ( 0.5, 0.93 )
   ax.text( *xylogo, str_mode, color=color_mode, 
     fontsize = 12,
@@ -455,7 +487,7 @@ print(bbox3)
 #plt.tight_layout()
 #plt.show()
 plt.show(block=False)
-fname = f'face{MODE:1d}.jpg'
+fname = f'face{mode:1d}.jpg'
 plt.savefig(fname)
 #plt.savefig("face.jpg")
 plt.show()
